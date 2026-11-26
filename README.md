@@ -1,64 +1,64 @@
-# SmartIoT-Web 智联设备云管理平台前端
+# SmartIoT-Web · Smart Device Cloud Admin Frontend
 
-基于 **Vue 3 + TypeScript + Vite** 构建的物联网（IoT）设备云后台管理前端，与后端 **SmartIoT-Cloud 智联开放网关与设备云平台**（JDK 17 + Spring Boot 3）配套，依据 Knife4j 输出的 OpenAPI 3.0 协议文档驱动生成，覆盖管理员登录、第三方开放平台配额管控与 4G 远控指令实时监控的运维闭环。
+An IoT device-cloud admin frontend built with **Vue 3 + TypeScript + Vite**, designed as the companion to the **SmartIoT-Cloud Open Gateway & Device Cloud Platform** backend (JDK 17 + Spring Boot 3). Generated from the OpenAPI 3.0 specification exported by Knife4j, it covers the full operations loop: admin login, third-party open-platform quota management, and realtime monitoring of 4G remote-control commands.
 
-## 核心功能
+## Core Features
 
-* **OpenAPI 驱动的类型安全接口层**：依据后端 `openapi.json` 推导全部请求/响应 TypeScript Interface（`LoginRequest`、`AdminOpenPlatform`、`AdminCommandLog`、`AuthContext` 等），API 调用函数端到端类型提示，解包 `Result<T>` 后直接返回业务数据。
-* **双轨鉴权对接（管理端）**：Axios 请求拦截器自动注入 `Authorization: Bearer <token>`；响应拦截器统一处理 `code !== 200` 的 `ElMessage.error` 提示；HTTP 401 与业务 401 双通道识别，自动清除失效凭证并携带 `redirect` 跳转登录页，登录成功后回到原页面。
-* **路由级访问守卫**：基于 `vue-router` 的 `beforeEach` 守卫，未登录访问受保护页面自动重定向登录页，已登录访问登录页自动跳转首页。
-* **开放平台配额管控**：平台列表展示 AppId、平台名称、剩余配额（分级变色进度条：充足/偏低/告急）与启用状态；“配额充值”弹窗支持快捷金额与充值后配额实时预览，提交成功后乐观更新行数据并重新同步列表。
-* **4G 远控指令实时监控**：指令日志表格以 `el-tag` 区分状态（0-下发中 `warning`、1-执行成功 `success`、2-超时失效 `danger`），下发中指令带呼吸圆点与行高亮；默认 10 秒静默轮询自动刷新（可开关），支持按设备 SN / 指令 ID / 类型搜索与状态筛选，组件卸载自动清理定时器。
-* **运维态势统计**：顶部统计卡片实时汇总接入平台数、剩余配额总量、指令成功率与下发中指令数。
-* **国际化（默认英语）**：零依赖轻量响应式 i18n，`EN / 中文` 滑块切换器全站即时生效，同步驱动 Element Plus 内置语言包、表单校验规则、`<html lang>` 与浏览器标题，语言选择持久化至 `localStorage`。
-* **主题化设计系统**：「深空蓝 × 电光青」IoT 监控暗色主题，定制 Element Plus Dark 变量、主题化滚动条、玻璃拟态面板、极光背景与设备网络动效登录页。
+* **OpenAPI-driven, type-safe API layer**: All request/response TypeScript interfaces (`LoginRequest`, `AdminOpenPlatform`, `AdminCommandLog`, `AuthContext`, etc.) are derived from the backend `openapi.json`. API functions provide end-to-end type hints and return business data directly after unwrapping `Result<T>`.
+* **Dual-channel auth integration (admin side)**: The Axios request interceptor injects `Authorization: Bearer <token>` automatically; the response interceptor handles `code !== 200` with unified `ElMessage.error` toasts. Both HTTP 401 and business-code 401 are detected, stale credentials are cleared, and the user is redirected to the login page with a `redirect` query so they return to the original page after signing in.
+* **Route-level access guard**: A `vue-router` `beforeEach` guard redirects unauthenticated visits to protected pages to the login page, and redirects authenticated visits to the login page back to the dashboard.
+* **Open-platform quota management**: The platform table shows AppId, platform name, remaining quota (tiered color-coded progress bar: healthy / low / critical) and enabled status. The "Recharge Quota" dialog offers quick amounts and a live preview of the post-recharge quota; on success the row is updated optimistically and the list is re-synced.
+* **Realtime 4G command monitoring**: The command-log table distinguishes states with `el-tag` (0 – Sending `warning`, 1 – Succeeded `success`, 2 – Expired `danger`). In-flight commands get a breathing dot and row highlight. Silent polling auto-refreshes every 10 seconds by default (toggleable), with search by device SN / command ID / type and status filtering; timers are cleaned up automatically on component unmount.
+* **Operations overview stats**: Top stat cards aggregate connected platform count, total remaining quota, command success rate, and in-flight command count in real time.
+* **Internationalization (English by default)**: A zero-dependency, lightweight reactive i18n module. The `EN / 中文` sliding switch takes effect instantly across the whole site, driving Element Plus built-in locales, form validation rules, `<html lang>` and the browser title in sync; the language choice persists to `localStorage`.
+* **Themed design system**: A "deep-space navy × electric cyan" dark IoT monitoring theme with customized Element Plus dark variables, themed scrollbars, glassmorphism panels, aurora backgrounds, and a login page featuring an animated device-network graphic.
 
-## 技术栈
+## Tech Stack
 
-* **核心框架**：Vue 3.5（`<script setup lang="ts">` 组合式 API）、TypeScript 6.0
-* **构建工具**：Vite 5.4.11（锁定版本以兼容较低 Node 环境）、vue-tsc 类型检查
-* **UI 组件库**：Element Plus 2.14（暗色主题 + 中文/英文语言包）、@element-plus/icons-vue
-* **路由与请求**：vue-router（History 模式 + 导航守卫）、Axios 1.x（拦截器统一封装）
-* **国际化**：自研轻量响应式 i18n 模块（无第三方依赖）
+* **Core framework**: Vue 3.5 (`<script setup lang="ts">` Composition API), TypeScript 6.0
+* **Build tooling**: Vite 5.4.11 (version pinned for compatibility with older Node environments), vue-tsc type checking
+* **UI library**: Element Plus 2.14 (dark theme + English/Chinese locales), @element-plus/icons-vue
+* **Routing & HTTP**: vue-router (History mode + navigation guards), Axios 1.x (unified interceptor wrapper)
+* **i18n**: In-house lightweight reactive i18n module (no third-party dependencies)
 
-## 目录结构
+## Directory Structure
 
 ```
-smart-iot-web 
-├── public/ # 静态资源（favicon 等） 
+smart-iot-web
+├── public/ # Static assets (favicon, etc.) 
 ├── src 
 │ ├── api 
-│ │ └── iot.ts # OpenAPI 推导的类型定义与 API 调用函数 
+│ │ └── iot.ts # OpenAPI-derived type definitions & API functions 
 │ ├── components 
-│ │ └── LangSwitch.vue # EN / 中文 语言切换器 
+│ │ └── LangSwitch.vue # EN / 中文 language switch 
 │ ├── i18n 
-│ │ └── index.ts # 语言状态、双语文案字典、Element Plus 语言包同步 
+│ │ └── index.ts # Locale state, bilingual dictionaries, Element Plus locale sync 
 │ ├── router 
-│ │ └── index.ts # 路由表与 Token 导航守卫 
+│ │ └── index.ts # Route table & token-based navigation guard 
 │ ├── utils 
-│ │ ├── auth.ts # Token / 昵称的 localStorage 统一存取 
-│ │ └── request.ts # Axios 实例：鉴权注入、Result 解包、401 处理 
+│ │ ├── auth.ts # Unified localStorage access for token / nickname 
+│ │ └── request.ts # Axios instance: auth injection, Result unwrapping, 401 handling 
 │ ├── views 
-│ │ ├── Login.vue # 登录页：品牌展示区 + 账号表单 
-│ │ └── Dashboard.vue # 控制台：平台配额表格 + 4G 指令实时监控 
-│ ├── App.vue # 根组件：ConfigProvider 语言提供者 + 路由出口 
-│ ├── main.ts # 应用入口：Element Plus（暗色）与路由注册 
-│ └── style.css # 全局设计系统（暗色变量、滚动条、共享样式） 
-├── openapi.json # 后端 Knife4j 导出的 OpenAPI 3.0 协议文档 
-├── vite.config.ts # /api 代理转发配置 
+│ │ ├── Login.vue # Login page: brand showcase + credential form 
+│ │ └── Dashboard.vue # Console: platform quota table + realtime 4G command monitor 
+│ ├── App.vue # Root component: ConfigProvider locale provider + router outlet 
+│ ├── main.ts # App entry: Element Plus (dark) & router registration 
+│ └── style.css # Global design system (dark variables, scrollbars, shared styles) 
+├── openapi.json # OpenAPI 3.0 spec exported by the backend's Knife4j 
+├── vite.config.ts # /api dev-proxy configuration 
 └── package.json
 ```
-## 运行环境
+## Requirements
 
-* **Node.js**：18+（推荐 20 / 22 LTS；项目已将 Vite 锁定为 `5.4.11`，规避旧版 Node 下 `crypto.hash is not a function` 报错）
-* **包管理器**：npm 9+
-* **配套后端**：SmartIoT-Cloud 网关服务运行于 `http://localhost:8081`（需先行启动 MySQL / Redis / RabbitMQ 相关环境，详见后端 README）
+* **Node.js**: 18+ (20 / 22 LTS recommended; Vite is pinned to `5.4.11` to avoid the `crypto.hash is not a function` error on older Node versions)
+* **Package manager**: npm 9+
+* **Companion backend**: The SmartIoT-Cloud gateway service running at `http://localhost:8081` (MySQL / Redis / RabbitMQ environments must be started first — see the backend README)
 
-## 快速开始
+## Quick Start
 
 ```bash
-# 1. 安装依赖
+# 1. Install dependencies
 npm install
 
-# 2. 启动开发服务器（默认 http://localhost:5173）
+# 2. Start the dev server (defaults to http://localhost:5173)
 npm run dev
