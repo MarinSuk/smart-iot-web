@@ -1,0 +1,336 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/admin/platform/recharge": {
+      "post": {
+        "tags": [
+          "Admin - Platform & Monitor"
+        ],
+        "summary": "Recharge Platform Quota",
+        "operationId": "rechargeQuota",
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "description": "Platform AppId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "partner_001"
+          },
+          {
+            "name": "addQuantity",
+            "in": "query",
+            "description": "Quota amount to add",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 500
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/auth/login": {
+      "post": {
+        "tags": [
+          "Admin - Authentication"
+        ],
+        "summary": "Admin Login",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultLoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/platform/list": {
+      "get": {
+        "tags": [
+          "Admin - Platform & Monitor"
+        ],
+        "summary": "List Open Platforms",
+        "operationId": "listPlatforms",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultListAdminOpenPlatform"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/platform/command-logs": {
+      "get": {
+        "tags": [
+          "Admin - Platform & Monitor"
+        ],
+        "summary": "List 4G Command Logs",
+        "operationId": "listCommandLogs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultListAdminCommandLog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/auth/me": {
+      "get": {
+        "tags": [
+          "Admin - Authentication"
+        ],
+        "summary": "Get Current User",
+        "operationId": "getCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultAuthContext"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ResultString": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Admin username",
+            "example": "admin"
+          },
+          "password": {
+            "type": "string",
+            "description": "Admin password",
+            "example": "123456"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Bearer access token"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "Display nickname"
+          }
+        }
+      },
+      "ResultLoginResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LoginResponse"
+          }
+        }
+      },
+      "AdminOpenPlatform": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "appId": {
+            "type": "string"
+          },
+          "appSecret": {
+            "type": "string"
+          },
+          "platformName": {
+            "type": "string"
+          },
+          "quotaRemain": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ResultListAdminOpenPlatform": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminOpenPlatform"
+            }
+          }
+        }
+      },
+      "AdminCommandLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cmdId": {
+            "type": "string"
+          },
+          "deviceSn": {
+            "type": "string"
+          },
+          "cmdType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expireTimestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ResultListAdminCommandLog": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminCommandLog"
+            }
+          }
+        }
+      },
+      "AuthContext": {
+        "type": "object",
+        "properties": {
+          "authType": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "subjectName": {
+            "type": "string"
+          }
+        }
+      },
+      "ResultAuthContext": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AuthContext"
+          }
+        }
+      }
+    }
+  }
+}
